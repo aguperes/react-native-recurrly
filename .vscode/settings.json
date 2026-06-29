@@ -5,5 +5,7 @@
     "source.sortMembers": "explicit"
   },
   "editor.formatOnSave": true,
-  "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+  "editor.defaultFormatter": "rvest.vs-code-prettier-eslint",
+  "editor.fontSize": 13,
+  "window.zoomLevel": 0.4
 }
