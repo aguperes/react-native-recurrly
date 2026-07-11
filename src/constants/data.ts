@@ -8,7 +8,7 @@ export const tabs: AppTab[] = [
 ];
 
 export const HOME_USER = {
-  name: 'Adrian | JS Mastery',
+  name: 'Agustin | Peres',
 };
 
 export const HOME_BALANCE = {
@@ -49,7 +49,7 @@ export const HOME_SUBSCRIPTIONS: Subscription[] = [
     icon: icons.adobe,
     name: 'Adobe Creative Cloud',
     plan: 'Teams Plan',
-    category: 'Design',
+    category: '   Design',
     paymentMethod: 'Visa ending in 8530',
     status: 'active',
     startDate: '2025-03-20T10:00:00.000Z',
