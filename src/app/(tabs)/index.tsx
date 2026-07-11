@@ -1,44 +1,90 @@
-import { Link } from 'expo-router';
+import ListHeading from '@/components/ListHeading';
+import SubscriptionCard from '@/components/SubscriptionCard';
+import UpcomingSubscriptionCard from '@/components/UpcomingSubscriptionCard';
+import {
+  HOME_BALANCE,
+  HOME_SUBSCRIPTIONS,
+  HOME_USER,
+  UPCOMING_SUBSCRIPTIONS,
+} from '@/constants/data';
+import { icons } from '@/constants/icons';
+import images from '@/constants/images';
+import dayjs from 'dayjs';
 import { styled } from 'nativewind';
-import { Text } from 'react-native';
+import { useState } from 'react';
+import { FlatList, Image, Text, View } from 'react-native';
 import { SafeAreaView as RNSafeAreaView } from 'react-native-safe-area-context';
+import { formatCurrency } from '../../../lib/utils';
 
 const SafeAreaView = styled(RNSafeAreaView);
 
 export default function App() {
+  const [expandedSubscriptionId, setExpandedSubscriptionId] = useState<string | null>();
+
   return (
     <SafeAreaView className="flex-1 bg-background p-5">
-      <Text className="text-2xl font-bold text-success">Welcome to Nativewind!</Text>
-      <Link
-        className="mt-4 p-4 rounded-md bg-primary text-white text-2xl font-bold"
-        href="/onboarding"
-      >
-        Go to Onboarding Screen
-      </Link>
-      <Link
-        className="mt-4 p-4 rounded-md bg-primary text-white text-2xl font-bold"
-        href="/(auth)/sign-in"
-      >
-        Go to SignIn
-      </Link>
-      <Link
-        className="mt-4 p-4 rounded-md bg-primary text-white text-2xl font-bold"
-        href="/(auth)/sign-up"
-      >
-        Go to Sign Up
-      </Link>
-      <Link
-        className="mt-4 p-4 rounded-md bg-primary text-white text-2xl font-bold"
-        href="/subscriptions/spotify"
-      >
-        Spotify Subscription
-      </Link>
-      <Link
-        className="mt-4 p-4 rounded-md bg-primary text-white text-2xl font-bold"
-        href={{ pathname: '/subscriptions/[id]', params: { id: 'claude' } }}
-      >
-        Claude Max Subscription
-      </Link>
+      <FlatList
+        ListHeaderComponent={() => (
+          <>
+            <View className="mb-2.5 flex-row items-center justify-between">
+              <View className="flex-row items-center">
+                <Image source={images.avatar} className="size-16 rounded-full" />
+                <Text className="ml-4 text-primary font-sans-bold text-2xl">{HOME_USER.name}</Text>
+              </View>
+              <Image source={icons.add} className="size-12" />
+            </View>
+
+            <View className="my-2.5 min-h-50 justify-between gap-5 rounded-bl-4xl rounded-tr-4xl bg-accent p-6">
+              <Text className="text-xl font-sans-semibold text-white/80">Balance</Text>
+              <View className="flex-row items-center justify-between">
+                <Text className="text-4xl font-sans-extrabold text-white">
+                  {formatCurrency(HOME_BALANCE.amount)}
+                </Text>
+                <Text className="text-xl font-sans-medium text-white">
+                  {dayjs(HOME_BALANCE.nextRenewalDate).format('MM/DD')}
+                </Text>
+              </View>
+            </View>
+
+            <View className="mb-5">
+              <ListHeading title="Upcoming" />
+
+              <FlatList
+                data={UPCOMING_SUBSCRIPTIONS}
+                renderItem={({ item }) => <UpcomingSubscriptionCard item={item} />}
+                keyExtractor={(item) => item.id}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                ListEmptyComponent={
+                  <Text className="py-4 text-sm font-sans-medium text-black/60">
+                    No upcoming renewals yet.
+                  </Text>
+                }
+              />
+            </View>
+
+            <ListHeading title="All Subscriptions" />
+          </>
+        )}
+        data={HOME_SUBSCRIPTIONS}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <SubscriptionCard
+            {...item}
+            expanded={expandedSubscriptionId === item.id}
+            onPress={() =>
+              setExpandedSubscriptionId((currentId) => (currentId === item.id ? null : item.id))
+            }
+          />
+        )}
+        extraData={expandedSubscriptionId}
+        ItemSeparatorComponent={() => <View className="h-4" />}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+          <Text className="py-4 text-sm font-sans-medium text-black/60">No subscriptions yet.</Text>
+        }
+        contentContainerClassName="pb-30"
+      />
     </SafeAreaView>
   );
 }
